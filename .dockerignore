@@ -1,0 +1,6 @@
+target/
+.mvn/wrapper/*.jar.bak
+.git
+.env
+*.md
+postman/

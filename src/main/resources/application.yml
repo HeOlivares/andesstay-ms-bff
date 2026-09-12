@@ -1,0 +1,38 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: andesstay-ms-bff
+
+andesstay:
+  catalog-base-url: ${CATALOG_BASE_URL:http://localhost:8081}
+  reservations-base-url: ${RESERVATIONS_BASE_URL:http://localhost:8082}
+  security:
+    # local = HMAC JWT (demo sin Azure). azure = validación contra Azure AD.
+    mode: ${SECURITY_MODE:local}
+    jwt:
+      local-secret: ${JWT_LOCAL_SECRET:andesstay-local-dev-secret-change-me-32b}
+      audience: ${AZURE_AUDIENCE:api://andesstay-api}
+      # Solo usado cuando SECURITY_MODE=azure
+      issuer-uri: ${AZURE_ISSUER_URI:https://login.microsoftonline.com/common/v2.0}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    org.springframework.security: INFO
