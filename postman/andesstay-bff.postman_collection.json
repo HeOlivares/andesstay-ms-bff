@@ -1,0 +1,114 @@
+{
+  "info": {
+    "name": "AndesStay BFF — evidencias 200/401/403",
+    "description": "Collection sin secretos reales. Genera tokens con LocalTokenGenerator (SECURITY_MODE=local).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "adminToken", "value": "" },
+    { "key": "operadorToken", "value": "" },
+    { "key": "clienteToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health público → 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/health"
+      }
+    },
+    {
+      "name": "Me sin token → 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/me"
+      }
+    },
+    {
+      "name": "Me Admin → 200",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/me"
+      }
+    },
+    {
+      "name": "Catalog GET Admin → 200",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/catalog/units"
+      }
+    },
+    {
+      "name": "Catalog GET sin token → 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/catalog/units"
+      }
+    },
+    {
+      "name": "Catalog POST Operador → 403",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{operadorToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"U-999\",\n  \"name\": \"No debería crear\",\n  \"rate\": 1,\n  \"available\": true\n}"
+        },
+        "url": "{{baseUrl}}/api/catalog/units"
+      }
+    },
+    {
+      "name": "Catalog POST Cliente → 403",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{clienteToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"U-998\",\n  \"name\": \"Cliente no escribe\",\n  \"rate\": 1,\n  \"available\": true\n}"
+        },
+        "url": "{{baseUrl}}/api/catalog/units"
+      }
+    },
+    {
+      "name": "Catalog POST Admin → 200/201",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"U-101\",\n  \"name\": \"Suite Cordillera\",\n  \"rate\": 120000,\n  \"available\": true\n}"
+        },
+        "url": "{{baseUrl}}/api/catalog/units"
+      }
+    },
+    {
+      "name": "Catalog GET Operador → 200",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{operadorToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/catalog/units"
+      }
+    }
+  ]
+}

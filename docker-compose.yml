@@ -1,0 +1,16 @@
+services:
+  catalog:
+    build: ../andesstay-ms-catalog
+    ports:
+      - "8081:8081"
+  bff:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SECURITY_MODE: local
+      CATALOG_BASE_URL: http://catalog:8081
+      RESERVATIONS_BASE_URL: http://reservations:8082
+      AZURE_AUDIENCE: api://andesstay-api
+    depends_on:
+      - catalog
