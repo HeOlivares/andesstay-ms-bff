@@ -9,13 +9,13 @@ andesstay:
   catalog-base-url: ${CATALOG_BASE_URL:http://localhost:8081}
   reservations-base-url: ${RESERVATIONS_BASE_URL:http://localhost:8082}
   security:
-    # local = HMAC JWT (demo sin Azure). azure = validación contra Azure AD.
-    mode: ${SECURITY_MODE:local}
+    # azure = IDaaS (default demo). local = HMAC solo para pruebas offline.
+    mode: ${SECURITY_MODE:azure}
     jwt:
       local-secret: ${JWT_LOCAL_SECRET:andesstay-local-dev-secret-change-me-32b}
-      audience: ${AZURE_AUDIENCE:api://andesstay-api}
-      # Solo usado cuando SECURITY_MODE=azure
-      issuer-uri: ${AZURE_ISSUER_URI:https://login.microsoftonline.com/common/v2.0}
+      # App ID URI; el validador también acepta el Client ID sin prefijo api://
+      audience: ${AZURE_AUDIENCE:api://4cd6df9a-e2f7-4024-aea6-dd67c49709bc}
+      issuer-uri: ${AZURE_ISSUER_URI:https://login.microsoftonline.com/cb0b9f53-0ba7-4f09-8da2-c2f5ab4b73ee/v2.0}
 
 management:
   endpoints:

@@ -5,6 +5,8 @@ import cl.duoc.andesstay.bff.web.ApiError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -91,7 +93,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	@ConditionalOnProperty(name = "andesstay.security.mode", havingValue = "local", matchIfMissing = true)
+	@ConditionalOnProperty(name = "andesstay.security.mode", havingValue = "local")
 	JwtDecoder localJwtDecoder() {
 		byte[] secret = properties.getSecurity().getJwt().getLocalSecret().getBytes(StandardCharsets.UTF_8);
 		SecretKey key = new SecretKeySpec(secret, "HmacSHA256");
@@ -104,7 +106,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	@ConditionalOnProperty(name = "andesstay.security.mode", havingValue = "azure")
+	@ConditionalOnProperty(name = "andesstay.security.mode", havingValue = "azure", matchIfMissing = true)
 	JwtDecoder azureJwtDecoder() {
 		String issuer = properties.getSecurity().getJwt().getIssuerUri();
 		NimbusJwtDecoder decoder = NimbusJwtDecoder.withIssuerLocation(issuer).build();
@@ -114,14 +116,38 @@ public class SecurityConfig {
 		return decoder;
 	}
 
+	/**
+	 * MSAL access tokens often use Client ID as {@code aud} without the {@code api://} prefix.
+	 * Accept both App ID URI and bare Client ID forms.
+	 */
 	private OAuth2TokenValidator<Jwt> audienceValidator(String expectedAudience) {
+		Set<String> accepted = audienceAliases(expectedAudience);
 		return token -> {
-			if (token.getAudience() != null && token.getAudience().contains(expectedAudience)) {
-				return OAuth2TokenValidatorResult.success();
+			if (token.getAudience() != null) {
+				for (String aud : token.getAudience()) {
+					if (accepted.contains(aud)) {
+						return OAuth2TokenValidatorResult.success();
+					}
+				}
 			}
 			OAuth2Error error = new OAuth2Error("invalid_token", "Invalid audience", null);
 			return OAuth2TokenValidatorResult.failure(error);
 		};
+	}
+
+	static Set<String> audienceAliases(String configured) {
+		Set<String> accepted = new LinkedHashSet<>();
+		if (configured == null || configured.isBlank()) {
+			return accepted;
+		}
+		String value = configured.trim();
+		accepted.add(value);
+		if (value.startsWith("api://")) {
+			accepted.add(value.substring("api://".length()));
+		} else {
+			accepted.add("api://" + value);
+		}
+		return accepted;
 	}
 
 	private AuthenticationEntryPoint authenticationEntryPoint() {
