@@ -26,7 +26,10 @@ public final class LocalTokenGenerator {
 				"JWT_LOCAL_SECRET",
 				"andesstay-local-dev-secret-change-me-32b"
 		);
-		String audience = System.getenv().getOrDefault("AZURE_AUDIENCE", "api://andesstay-api");
+		String audience = System.getenv().getOrDefault(
+				"AZURE_AUDIENCE",
+				"api://4cd6df9a-e2f7-4024-aea6-dd67c49709bc"
+		);
 
 		Instant now = Instant.now();
 		JWTClaimsSet claims = new JWTClaimsSet.Builder()

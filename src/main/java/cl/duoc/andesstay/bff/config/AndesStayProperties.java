@@ -30,8 +30,8 @@ public class AndesStayProperties {
 	}
 
 	public static class Security {
-		/** local | azure */
-		private String mode = "local";
+		/** azure (default demo) | local (HMAC offline) */
+		private String mode = "azure";
 		private final Jwt jwt = new Jwt();
 
 		public String getMode() {
@@ -49,8 +49,9 @@ public class AndesStayProperties {
 
 	public static class Jwt {
 		private String localSecret = "andesstay-local-dev-secret-change-me-32b";
-		private String audience = "api://andesstay-api";
-		private String issuerUri = "https://login.microsoftonline.com/common/v2.0";
+		private String audience = "api://4cd6df9a-e2f7-4024-aea6-dd67c49709bc";
+		private String issuerUri =
+				"https://login.microsoftonline.com/cb0b9f53-0ba7-4f09-8da2-c2f5ab4b73ee/v2.0";
 
 		public String getLocalSecret() {
 			return localSecret;
