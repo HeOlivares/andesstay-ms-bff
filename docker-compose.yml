@@ -1,3 +1,9 @@
+# Stack local del BFF. En EC2/demo usar andesstay-infra/apps/compose.yml
+# (servicios ms-catalog, ms-reservations, ms-bff).
+#
+# Aquí el servicio se llama catalog a propósito; MS_CATALOG_URL apunta a ese nombre.
+# No hay contenedor reservations: no se setea MS_RESERVATIONS_URL (el default local es localhost:8082).
+
 services:
   catalog:
     build: ../andesstay-ms-catalog
@@ -10,7 +16,6 @@ services:
     environment:
       SECURITY_MODE: azure
       MS_CATALOG_URL: http://catalog:8081
-      MS_RESERVATIONS_URL: http://reservations:8082
       AZURE_ISSUER_URI: https://login.microsoftonline.com/cb0b9f53-0ba7-4f09-8da2-c2f5ab4b73ee/v2.0
       AZURE_AUDIENCE: api://4cd6df9a-e2f7-4024-aea6-dd67c49709bc
     depends_on:
