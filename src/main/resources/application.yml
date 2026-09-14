@@ -6,8 +6,9 @@ spring:
     name: andesstay-ms-bff
 
 andesstay:
-  catalog-base-url: ${CATALOG_BASE_URL:http://localhost:8081}
-  reservations-base-url: ${RESERVATIONS_BASE_URL:http://localhost:8082}
+  # Nombres oficiales (andesstay-infra/apps/compose.yml). Fallback a *_BASE_URL por compatibilidad local.
+  catalog-base-url: ${MS_CATALOG_URL:${CATALOG_BASE_URL:http://localhost:8081}}
+  reservations-base-url: ${MS_RESERVATIONS_URL:${RESERVATIONS_BASE_URL:http://localhost:8082}}
   security:
     # azure = IDaaS (default demo). local = HMAC solo para pruebas offline.
     mode: ${SECURITY_MODE:azure}
