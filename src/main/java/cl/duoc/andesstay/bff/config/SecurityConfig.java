@@ -78,7 +78,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/reservations/**")
 						.hasAnyRole("Admin", "Operador", "Cliente")
 						.requestMatchers(HttpMethod.POST, "/api/reservations/**")
-						.hasAnyRole("Operador", "Cliente")
+						.hasAnyRole("Admin", "Operador", "Cliente")
 						.requestMatchers(HttpMethod.PUT, "/api/reservations/**")
 						.hasAnyRole("Admin", "Operador")
 						.requestMatchers(HttpMethod.PATCH, "/api/reservations/**").denyAll()

@@ -93,7 +93,7 @@ class RoleAccessTest {
 
 	@ParameterizedTest
 	@CsvSource({
-			"Admin,403",
+			"Admin,200",
 			"Operador,200",
 			"Cliente,200",
 			"Auditor,403"
