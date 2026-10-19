@@ -3,7 +3,9 @@ package cl.duoc.andesstay.bff.config;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,6 +23,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +58,8 @@ class RoleAccessTest {
 		when(proxyService.forwardCatalog(any(HttpServletRequest.class), nullable(byte[].class)))
 				.thenReturn(ResponseEntity.ok(new byte[0]));
 		when(proxyService.forwardReservations(any(HttpServletRequest.class), nullable(byte[].class)))
+				.thenReturn(ResponseEntity.ok(new byte[0]));
+		when(proxyService.forwardAudit(any(HttpServletRequest.class), nullable(byte[].class)))
 				.thenReturn(ResponseEntity.ok(new byte[0]));
 	}
 
@@ -111,6 +116,38 @@ class RoleAccessTest {
 	})
 	void changeReservationStatus(String role, int expected) throws Exception {
 		perform(put("/api/reservations/1/status").contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"CONFIRMADA\"}"), role, expected);
+	}
+
+	@Test
+	void auditRequiresAuthentication() throws Exception {
+		mockMvc.perform(get("/api/audit/timeline")).andExpect(status().isUnauthorized());
+		mockMvc.perform(post("/api/audit/timeline").contentType(MediaType.APPLICATION_JSON).content("{}"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@ParameterizedTest
+	@CsvSource({
+			"Admin,200",
+			"Operador,403",
+			"Cliente,403",
+			"Auditor,200"
+	})
+	void readAudit(String role, int expected) throws Exception {
+		perform(get("/api/audit/timeline"), role, expected);
+	}
+
+	@ParameterizedTest
+	@CsvSource({
+			"Admin,403",
+			"Operador,403",
+			"Cliente,403",
+			"Auditor,403"
+	})
+	void writeAuditIsDenied(String role, int expected) throws Exception {
+		perform(post("/api/audit/timeline").contentType(MediaType.APPLICATION_JSON).content("{}"), role, expected);
+		perform(put("/api/audit/timeline/1").contentType(MediaType.APPLICATION_JSON).content("{}"), role, expected);
+		perform(patch("/api/audit/timeline/1").contentType(MediaType.APPLICATION_JSON).content("{}"), role, expected);
+		perform(delete("/api/audit/timeline/1"), role, expected);
 	}
 
 	private void perform(MockHttpServletRequestBuilder request, String role, int expected) throws Exception {
