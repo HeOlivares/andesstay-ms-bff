@@ -83,6 +83,8 @@ public class SecurityConfig {
 						.hasAnyRole("Admin", "Operador")
 						.requestMatchers(HttpMethod.PATCH, "/api/reservations/**").denyAll()
 						.requestMatchers(HttpMethod.DELETE, "/api/reservations/**").denyAll()
+						.requestMatchers("/api/audit/**")
+						.hasAnyRole("Auditor", "Admin")
 						.requestMatchers("/api/me").authenticated()
 						.anyRequest().authenticated()
 				)

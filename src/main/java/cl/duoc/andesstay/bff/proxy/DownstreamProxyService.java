@@ -41,6 +41,10 @@ public class DownstreamProxyService {
 		return forward(properties.getReservationsBaseUrl(), request, body, "reservations");
 	}
 
+	public ResponseEntity<byte[]> forwardAudit(HttpServletRequest request, byte[] body) {
+		return forward(properties.getAuditBaseUrl(), request, body, "audit");
+	}
+
 	private ResponseEntity<byte[]> forward(
 			String baseUrl,
 			HttpServletRequest request,

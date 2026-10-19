@@ -7,6 +7,7 @@ public class AndesStayProperties {
 
 	private String catalogBaseUrl = "http://localhost:8081";
 	private String reservationsBaseUrl = "http://localhost:8082";
+	private String auditBaseUrl = "http://localhost:8084";
 	private final Security security = new Security();
 
 	public String getCatalogBaseUrl() {
@@ -23,6 +24,14 @@ public class AndesStayProperties {
 
 	public void setReservationsBaseUrl(String reservationsBaseUrl) {
 		this.reservationsBaseUrl = reservationsBaseUrl;
+	}
+
+	public String getAuditBaseUrl() {
+		return auditBaseUrl;
+	}
+
+	public void setAuditBaseUrl(String auditBaseUrl) {
+		this.auditBaseUrl = auditBaseUrl;
 	}
 
 	public Security getSecurity() {

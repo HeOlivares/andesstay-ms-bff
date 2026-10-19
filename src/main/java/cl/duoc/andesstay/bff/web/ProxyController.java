@@ -39,4 +39,13 @@ public class ProxyController {
 	public ResponseEntity<byte[]> reservations(HttpServletRequest request, @RequestBody(required = false) byte[] body) {
 		return proxyService.forwardReservations(request, body);
 	}
+
+	@RequestMapping(
+			value = "/api/audit/**",
+			method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE}
+	)
+	@Operation(summary = "Proxy hacia andesstay-ms-audit (502 si no está disponible)")
+	public ResponseEntity<byte[]> audit(HttpServletRequest request, @RequestBody(required = false) byte[] body) {
+		return proxyService.forwardAudit(request, body);
+	}
 }
