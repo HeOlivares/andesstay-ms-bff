@@ -119,6 +119,27 @@ class RoleAccessTest {
 	}
 
 	@Test
+	void preparationRequiresAuthentication() throws Exception {
+		mockMvc.perform(put("/api/reservations/1/preparation")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("{\"preparationStatus\":\"READY\"}"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@ParameterizedTest
+	@CsvSource({
+			"Admin,200",
+			"Operador,200",
+			"Cliente,403",
+			"Auditor,403"
+	})
+	void updatePreparation(String role, int expected) throws Exception {
+		perform(put("/api/reservations/1/preparation")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"preparationStatus\":\"READY\"}"), role, expected);
+	}
+
+	@Test
 	void auditRequiresAuthentication() throws Exception {
 		mockMvc.perform(get("/api/audit/timeline")).andExpect(status().isUnauthorized());
 		mockMvc.perform(post("/api/audit/timeline").contentType(MediaType.APPLICATION_JSON).content("{}"))
